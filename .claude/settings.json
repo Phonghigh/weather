@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m venv .venv)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(.venv/bin/python -c ' *)",
+      "Bash(QT_QPA_PLATFORM=offscreen .venv/bin/python -c ' *)",
+      "Bash(grep -v \"^$\")",
+      "Bash(grep -v \"box-shadow\\\\|Unknown property\\\\|parse stylesheet\\\\|^$\")",
+      "Bash(grep -v \"Vulkan\\\\|^$\")"
+    ]
+  }
+}

@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    @keyframes ewmspin{to{transform:rotate(360deg)}}
+    @keyframes ewmfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    @keyframes ewmpulse{0%,100%{opacity:.55}50%{opacity:1}}
+    @keyframes ewmrain{0%{opacity:0}10%{opacity:1}100%{transform:translateY(14px);opacity:0}}
+    .ewm-scroll::-webkit-scrollbar{width:11px;height:11px}
+    .ewm-scroll::-webkit-scrollbar-thumb{background:#c2cad4;border-radius:6px;border:2px solid #fff}
+    .ewm-scroll::-webkit-scrollbar-track{background:transparent}
+  </style>
+</helmet>
+<div ref="{{ setRoot }}" style="--accent:#1565a7;--accent2:#0f4f82;--rh:31px;--fs:13px;position:absolute;inset:0;font-family:'Ubuntu',system-ui,sans-serif;font-size:var(--fs);color:#1f2933;background:#11151c;overflow:hidden;-webkit-font-smoothing:antialiased">
+
+  <!-- ============ LOGIN ============ -->
+  <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 120% at 70% 10%, #1f5f97 0%, #15466f 38%, #0c2a45 100%);display:flex;align-items:center;justify-content:center;overflow:hidden">
+      <!-- decorative topo / water lines -->
+      <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:.16">
+        <g fill="none" stroke="#bfe0ff" stroke-width="1.2">
+          <path d="M-50 240 Q 300 180 600 250 T 1250 240"></path>
+          <path d="M-50 300 Q 320 240 600 310 T 1250 300"></path>
+          <path d="M-50 360 Q 300 300 600 370 T 1250 360"></path>
+          <path d="M-50 470 Q 340 410 620 480 T 1250 470"></path>
+          <path d="M-50 540 Q 300 480 600 550 T 1250 540"></path>
+          <path d="M-50 610 Q 320 550 600 620 T 1250 610"></path>
+        </g>
+      </svg>
+      <div style="position:relative;width:392px;background:#fff;border-radius:12px;box-shadow:0 30px 80px rgba(5,20,40,.5);padding:38px 40px 26px;animation:ewmfade .4s ease both">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:26px">
+          <div style="width:62px;height:62px;border-radius:15px;background:linear-gradient(150deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(21,101,167,.35)">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="#fff"><path d="M12 2.2C12 2.2 5 10 5 14.6a7 7 0 0 0 14 0C19 10 12 2.2 12 2.2Z" opacity=".95"></path><path d="M9 14.2a3 3 0 0 0 3 3" fill="none" stroke="#cfe6fb" stroke-width="1.5" stroke-linecap="round"></path></svg>
+          </div>
+          <div style="font-size:24px;font-weight:700;letter-spacing:-.5px;margin-top:10px">eWM</div>
+          <div style="font-size:12.5px;color:#5b6772">eWater Warning Model</div>
+          <div style="font-size:11px;color:#8893a0;letter-spacing:.3px">Urban Flood Simulation Platform</div>
+        </div>
+        <label style="display:block;font-size:11.5px;font-weight:500;color:#5b6772;margin-bottom:6px">Password</label>
+        <input type="password" value="{{ password }}" onChange="{{ onPw }}" onKeyDown="{{ onPwKey }}" placeholder="Enter password" style="width:100%;height:40px;border:1.5px solid #c3cad3;border-radius:7px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;color:#1f2933" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px rgba(21,101,167,.15)">
+        <sc-if value="{{ pwError }}" hint-placeholder-val="{{ false }}">
+          <div style="color:#d64545;font-size:11.5px;margin-top:7px;display:flex;align-items:center;gap:5px">{{ pwError }}</div>
+        </sc-if>
+        <button onClick="{{ login }}" style="width:100%;height:42px;margin-top:16px;background:linear-gradient(150deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:.2px" style-hover="filter:brightness(1.07)" style-active="transform:translateY(1px)">Login</button>
+        <div style="height:1px;background:#e6eaef;margin:22px 0 12px"></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#8893a0">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:#3f9d52;display:inline-block"></span>License valid until 2027-06-16</span>
+          <span>v1.0.0</span>
+        </div>
+        <div style="font-size:10.5px;color:#aab4c0;margin-top:8px;text-align:center">Demo — any password unlocks the prototype</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ MAIN WINDOW ============ -->
+  <sc-if value="{{ showApp }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#eceff2">
+
+      <!-- OS title bar -->
+      <div style="height:34px;flex:none;background:#2b2f36;display:flex;align-items:center;padding:0 12px;color:#cdd3da;user-select:none">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="#7fb2e0" style="margin-right:8px"><path d="M12 2.2C12 2.2 5 10 5 14.6a7 7 0 0 0 14 0C19 10 12 2.2 12 2.2Z"></path></svg>
+        <span style="font-size:12.5px;font-weight:500">eWM — eWater Warning Model</span>
+        <span style="font-size:11.5px;color:#7a828c;margin-left:8px">— urban_flood_2026.ewm</span>
+        <div style="margin-left:auto;display:flex;gap:14px;align-items:center">
+          <span style="width:13px;height:2px;background:#aeb6c0;display:inline-block;border-radius:2px"></span>
+          <span style="width:11px;height:11px;border:1.6px solid #aeb6c0;display:inline-block;border-radius:2px"></span>
+          <span onClick="{{ logout }}" style="cursor:pointer;color:#aeb6c0;font-size:15px;line-height:1" style-hover="color:#ff6b6b">✕</span>
+        </div>
+      </div>
+
+      <!-- menu bar -->
+      <div style="height:30px;flex:none;background:#f7f8fa;border-bottom:1px solid #dfe3e9;display:flex;align-items:center;padding:0 6px;gap:2px">
+        <sc-for list="{{ menus }}" as="m" hint-placeholder-count="5">
+          <span style="font-size:12.5px;padding:4px 10px;border-radius:5px;cursor:default;color:#39424d" style-hover="background:#e7ebf1">{{ m }}</span>
+        </sc-for>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:10px;padding-right:8px">
+          <span style="font-size:11px;color:#8893a0">License</span>
+          <span style="font-size:11px;font-weight:600;color:#2e7d46;background:#e7f4ea;border:1px solid #c4e3cd;padding:2px 8px;border-radius:20px">365 days</span>
+        </div>
+      </div>
+
+      <!-- brand / tab strip -->
+      <div style="flex:none;background:#fff;border-bottom:1px solid #dfe3e9;display:flex;align-items:flex-end;padding:0 14px;gap:2px;height:46px">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+          <div onClick="{{ t.go }}" style="{{ t.style }}">
+            <span style="display:flex;align-items:center;justify-content:center;width:18px;height:18px">{{ t.glyph }}</span>
+            <span>{{ t.label }}</span>
+            <sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;background:#e7f4ea;color:#2e7d46;border:1px solid #c4e3cd;border-radius:10px;padding:0 6px;font-weight:600">{{ t.badge }}</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="ewm-scroll" style="flex:1;overflow:auto;background:#eceff2">
+
+        <!-- ===== INPUT TAB ===== -->
+        <sc-if value="{{ isInput }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:1fr 380px;gap:14px;padding:16px;min-height:100%">
+            <!-- config column -->
+            <div style="display:flex;flex-direction:column;gap:13px">
+              <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:13px">SWMM Drainage Model</div>
+                <label style="font-size:12px;color:#5b6772;font-weight:500">Input file (.inp)</label>
+                <div style="display:flex;gap:8px;margin-top:6px">
+                  <div style="flex:1;height:var(--rh);border:1.5px solid #c3cad3;border-radius:6px;display:flex;align-items:center;padding:0 11px;font-family:'Ubuntu Mono',monospace;font-size:12px;color:#39424d;background:#fbfcfd;overflow:hidden;white-space:nowrap">/data/hcmc/hcmc_d3.inp</div>
+                  <button style="{{ btnGhost }}" style-hover="background:#eef2f7">Browse…</button>
+                </div>
+                <div style="display:flex;gap:9px;margin-top:13px;flex-wrap:wrap">
+                  <div style="{{ statChip }}">147 <span style="color:#8893a0;font-weight:400">nodes</span></div>
+                  <div style="{{ statChip }}">189 <span style="color:#8893a0;font-weight:400">links</span></div>
+                  <div style="{{ statChip }}">52 <span style="color:#8893a0;font-weight:400">subcatch.</span></div>
+                  <div style="{{ statChip }}">SWMM <span style="color:#8893a0;font-weight:400">5.2</span></div>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:13px">GRASS GIS Mapset</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Location</label><div style="height:var(--rh);margin-top:6px;border:1.5px solid #c3cad3;border-radius:6px;display:flex;align-items:center;padding:0 11px;font-size:12.5px;background:#fbfcfd">urban_flood_2026</div></div>
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Mapset</label><div style="height:var(--rh);margin-top:6px;border:1.5px solid #c3cad3;border-radius:6px;display:flex;align-items:center;padding:0 11px;font-size:12.5px;background:#fbfcfd">PERMANENT</div></div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <button style="{{ btnGhost }}" style-hover="background:#eef2f7">Create New…</button>
+                  <button style="{{ btnGhost }}" style-hover="background:#eef2f7">Open Existing…</button>
+                  <button style="{{ btnGhost }};margin-left:auto" style-hover="background:#eef2f7">Open GRASS GUI ↗</button>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:13px">Raster Data</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <div>
+                    <label style="font-size:12px;color:#5b6772;font-weight:500">DEM (terrain)</label>
+                    <div style="display:flex;gap:8px;margin-top:6px"><div style="flex:1;height:var(--rh);border:1.5px solid #c3cad3;border-radius:6px;display:flex;align-items:center;padding:0 11px;font-family:'Ubuntu Mono',monospace;font-size:12px;color:#39424d;background:#fbfcfd">dem_5m.tif</div><button style="{{ btnGhost }}" style-hover="background:#eef2f7">Browse…</button></div>
+                  </div>
+                  <div>
+                    <label style="font-size:12px;color:#5b6772;font-weight:500">Rainfall (6-hour event)</label>
+                    <div style="display:flex;gap:8px;margin-top:6px"><div style="flex:1;height:var(--rh);border:1.5px solid #c3cad3;border-radius:6px;display:flex;align-items:center;padding:0 11px;font-family:'Ubuntu Mono',monospace;font-size:12px;color:#39424d;background:#fbfcfd">rain_6h.tif</div><button style="{{ btnGhost }}" style-hover="background:#eef2f7">Browse…</button></div>
+                  </div>
+                </div>
+                <button onClick="{{ importRaster }}" style="{{ importBtnStyle }}" style-hover="filter:brightness(1.05)">{{ importLabel }}</button>
+              </div>
+            </div>
+
+            <!-- validation column -->
+            <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px;align-self:start;position:sticky;top:0">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:14px">Validation Status</div>
+              <sc-for list="{{ validations }}" as="v" hint-placeholder-count="4">
+                <div style="display:flex;gap:11px;padding:11px 0;border-bottom:1px solid #eef1f5">
+                  <div style="width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;margin-top:1px;background:{{ v.color }}">{{ v.icon }}</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600;color:#2b333c">{{ v.title }}</div>
+                    <div style="font-size:11.5px;color:#7a828c;margin-top:2px;line-height:1.5">{{ v.detail }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="margin-top:15px;background:{{ readyBg }};border:1px solid {{ readyBorder }};border-radius:8px;padding:13px 14px;display:flex;align-items:center;gap:10px">
+                <div style="width:9px;height:9px;border-radius:50%;background:{{ readyDot }};box-shadow:0 0 0 4px {{ readyGlow }}"></div>
+                <div><div style="font-size:13px;font-weight:700;color:{{ readyText }}">{{ readyTitle }}</div><div style="font-size:11.5px;color:#7a828c">{{ readySub }}</div></div>
+              </div>
+              <button onClick="{{ gotoSim }}" style="width:100%;height:38px;margin-top:13px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer" style-hover="filter:brightness(1.07)">Configure Simulation →</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== SIMULATION TAB ===== -->
+        <sc-if value="{{ isSim }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px;min-height:100%">
+            <div style="display:flex;flex-direction:column;gap:13px">
+              <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:14px">Simulation Period</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Start date</label><input value="{{ sim.startDate }}" onChange="{{ ed.startDate }}" style="{{ inp }}"></div>
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Start time</label><input value="{{ sim.startTime }}" onChange="{{ ed.startTime }}" style="{{ inp }}"></div>
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">End date</label><input value="{{ sim.endDate }}" onChange="{{ ed.endDate }}" style="{{ inp }}"></div>
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">End time</label><input value="{{ sim.endTime }}" onChange="{{ ed.endTime }}" style="{{ inp }}"></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid #eef1f5">
+                  <span style="font-size:12px;color:#5b6772">Duration</span>
+                  <span style="font-size:13px;font-weight:700;color:var(--accent);background:#eaf2fa;padding:2px 10px;border-radius:6px">{{ durationLabel }}</span>
+                  <span style="font-size:12px;color:#5b6772;margin-left:14px">Timestep</span>
+                  <select value="{{ sim.timestep }}" onChange="{{ ed.timestep }}" style="height:30px;border:1.5px solid #c3cad3;border-radius:6px;padding:0 8px;font-family:inherit;font-size:12.5px;background:#fff;color:#1f2933">
+                    <option value="10">10 s</option><option value="30">30 s</option><option value="60">60 s</option><option value="120">120 s</option>
+                  </select>
+                </div>
+                <div style="margin-top:12px;font-size:11.5px;color:#7a828c;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:#3f9d52;display:inline-block"></span>Estimated Courant number ≈ {{ courant }} — stable</div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:14px">Default Parameters</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Friction model</label><div style="{{ ro }}">Manning</div></div>
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Manning n</label><div style="{{ ro }}">0.035</div></div>
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Infiltration</label><div style="{{ ro }}">Green-Ampt</div></div>
+                  <div><label style="font-size:12px;color:#5b6772;font-weight:500">Max ponding</label><div style="{{ ro }}">0.10 m</div></div>
+                </div>
+                <button onClick="{{ applyDefaults }}" style="{{ btnGhost }};width:100%;margin-top:14px;height:36px" style-hover="background:#eef2f7">Apply Default Settings</button>
+              </div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px;display:flex;flex-direction:column">
+              <div style="display:flex;align-items:center;margin-bottom:12px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase">ITZI .ini Preview</div>
+                <span onClick="{{ toggleIniEdit }}" style="margin-left:auto;font-size:11.5px;color:var(--accent);cursor:pointer;font-weight:600">{{ iniEditLabel }}</span>
+              </div>
+              <div class="ewm-scroll" style="flex:1;background:#1c2430;border-radius:8px;padding:14px 16px;font-family:'Ubuntu Mono',monospace;font-size:12px;line-height:1.65;color:#c9d6e5;overflow:auto;white-space:pre;min-height:330px">{{ iniText }}</div>
+              <div style="font-size:11px;color:#aab4c0;margin-top:10px">Auto-generated from the form. Generated config is saved with the run.</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== OUTPUT TAB ===== -->
+        <sc-if value="{{ isOutput }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px;display:flex;flex-direction:column;gap:14px;min-height:100%">
+            <div style="display:grid;grid-template-columns:1fr 360px;gap:14px">
+              <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:14px">Output Settings</div>
+                <label style="font-size:12px;color:#5b6772;font-weight:500">Output directory</label>
+                <div style="display:flex;gap:8px;margin-top:6px"><div style="flex:1;height:var(--rh);border:1.5px solid #c3cad3;border-radius:6px;display:flex;align-items:center;padding:0 11px;font-family:'Ubuntu Mono',monospace;font-size:12px;background:#fbfcfd;color:#39424d">~/ewm_runs/20260616_1534/</div><button style="{{ btnGhost }}" style-hover="background:#eef2f7">Browse…</button></div>
+                <label style="font-size:12px;color:#5b6772;font-weight:500;display:block;margin-top:13px">Raster output prefix</label>
+                <input value="{{ prefix }}" onChange="{{ ed.prefix }}" style="{{ inp }}">
+              </div>
+              <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px;display:flex;flex-direction:column;gap:9px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:4px">Action</div>
+                <button onClick="{{ runSim }}" style="{{ runBtnStyle }}" style-hover="filter:brightness(1.06)"><span style="font-size:14px">▶</span>{{ runLabel }}</button>
+                <button onClick="{{ abort }}" style="{{ abortBtnStyle }}">■ Abort</button>
+                <button onClick="{{ openResults }}" style="{{ resultsBtnStyle }}" style-hover="{{ resultsHover }}">◉ Open Results</button>
+              </div>
+            </div>
+
+            <!-- run log -->
+            <div style="background:#fff;border:1px solid #dfe3e9;border-radius:9px;padding:16px 18px;flex:1;display:flex;flex-direction:column;min-height:300px">
+              <div style="display:flex;align-items:center;margin-bottom:11px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase">Run Log</div>
+                <span style="margin-left:12px;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:20px;background:{{ runPillBg }};color:{{ runPillColor }};border:1px solid {{ runPillBorder }}">{{ runPillText }}</span>
+                <span style="margin-left:auto;font-size:12px;color:#5b6772;font-family:'Ubuntu Mono',monospace">Elapsed {{ elapsedStr }}</span>
+              </div>
+              <div ref="{{ setLog }}" class="ewm-scroll" style="flex:1;background:#10161f;border-radius:8px;padding:12px 14px;font-family:'Ubuntu Mono',monospace;font-size:12px;line-height:1.7;overflow:auto;min-height:200px">
+                <sc-if value="{{ logEmpty }}" hint-placeholder-val="{{ true }}"><div style="color:#56657a">Idle — press “Run Simulation” to start the ITZI pipeline.</div></sc-if>
+                <sc-for list="{{ logView }}" as="l" hint-placeholder-count="0">
+                  <div style="display:flex;gap:10px;animation:ewmfade .18s ease both"><span style="color:#566578;flex:none">{{ l.t }}</span><span style="color:{{ l.color }}">{{ l.m }}</span></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;margin-top:11px">
+                <div style="flex:1;height:9px;background:#e3e8ee;border-radius:6px;overflow:hidden"><div style="height:100%;width:{{ progressPct }};background:linear-gradient(90deg,var(--accent),#3a8fd6);border-radius:6px;transition:width .3s ease"></div></div>
+                <span style="font-size:12px;font-weight:700;color:var(--accent);font-family:'Ubuntu Mono',monospace;width:42px;text-align:right">{{ progressPct }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+
+      <!-- status bar -->
+      <div style="height:26px;flex:none;background:var(--accent2);display:flex;align-items:center;padding:0 13px;color:#dce9f6;font-size:11.5px;gap:0">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:{{ statusDot }}"></span>{{ statusText }}</span>
+        <span style="margin:0 14px;opacity:.4">|</span>
+        <span style="font-family:'Ubuntu Mono',monospace;opacity:.92">Mapset: urban_flood_2026/PERMANENT</span>
+        <span style="margin-left:auto;font-family:'Ubuntu Mono',monospace;opacity:.92">ITZI v25.8 · GRASS 8.4 · {{ elapsedStr }}</span>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ RESULTS WINDOW ============ -->
+  <sc-if value="{{ resultsOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(10,18,28,.45);display:flex;align-items:center;justify-content:center;z-index:30;animation:ewmfade .2s ease both">
+      <div style="width:96%;height:95%;background:#eceff2;border-radius:11px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 90px rgba(5,15,30,.5)">
+        <!-- results title bar -->
+        <div style="height:40px;flex:none;background:#2b2f36;display:flex;align-items:center;padding:0 14px;color:#cdd3da">
+          <span style="font-size:13px;font-weight:600">Results</span>
+          <span style="font-size:12px;color:#8a929c;margin-left:9px;font-family:'Ubuntu Mono',monospace">run 20260616_1534 · flood_run1</span>
+          <div style="margin-left:18px;display:flex;gap:3px">
+            <sc-for list="{{ tools }}" as="tt" hint-placeholder-count="6"><span style="font-size:11.5px;padding:4px 9px;border-radius:5px;color:#b9c0c9;cursor:default" style-hover="background:#3a3f47;color:#fff">{{ tt }}</span></sc-for>
+          </div>
+          <span onClick="{{ closeResults }}" style="margin-left:auto;cursor:pointer;color:#aeb6c0;font-size:16px" style-hover="color:#ff6b6b">✕</span>
+        </div>
+
+        <div style="flex:1;display:flex;min-height:0">
+          <!-- LEFT: layers -->
+          <div style="width:206px;flex:none;background:#fff;border-right:1px solid #dfe3e9;padding:14px 14px;overflow:auto" class="ewm-scroll">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:10px">Layers</div>
+            <sc-for list="{{ layerList }}" as="ly" hint-placeholder-count="4">
+              <div onClick="{{ ly.toggle }}" style="display:flex;align-items:center;gap:9px;padding:7px 6px;border-radius:6px;cursor:pointer" style-hover="background:#f3f6f9">
+                <span style="width:15px;height:15px;border-radius:4px;border:1.5px solid {{ ly.box }};background:{{ ly.fill }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700">{{ ly.check }}</span>
+                <span style="font-size:12.5px;color:#39424d">{{ ly.label }}</span>
+              </div>
+            </sc-for>
+            <div style="margin-top:14px;font-size:12px;color:#5b6772">Flood raster opacity</div>
+            <input type="range" min="0" max="100" value="{{ floodOpacity }}" onInput="{{ ed.opacity }}" style="width:100%;margin-top:8px;accent-color:var(--accent)">
+            <div style="font-size:11px;color:#8893a0;text-align:right">{{ floodOpacity }}%</div>
+
+            <div style="height:1px;background:#eef1f5;margin:15px 0"></div>
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:10px">Legend</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#5b6772">
+              <span style="display:flex;align-items:center;gap:9px"><span style="width:13px;height:13px;border-radius:50%;background:#d64545"></span>Flooding</span>
+              <span style="display:flex;align-items:center;gap:9px"><span style="width:13px;height:13px;border-radius:50%;background:#e8a33d"></span>High (surcharged)</span>
+              <span style="display:flex;align-items:center;gap:9px"><span style="width:13px;height:13px;border-radius:50%;background:#3f9d52"></span>Normal</span>
+              <span style="display:flex;align-items:center;gap:9px"><span style="width:12px;height:12px;border-radius:3px;background:#5b6772;transform:rotate(45deg)"></span>Outfall</span>
+            </div>
+          </div>
+
+          <!-- CENTER: map -->
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#eef1f4">
+            <div style="flex:1;position:relative;overflow:hidden">
+              <svg viewBox="0 0 880 560" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
+                <!-- basemap -->
+                <rect x="0" y="0" width="880" height="560" fill="#e9ede7"></rect>
+                <g opacity=".5">
+                  <rect x="40" y="40" width="150" height="110" fill="#dde3da" rx="3"></rect>
+                  <rect x="230" y="40" width="200" height="90" fill="#dde3da" rx="3"></rect>
+                  <rect x="470" y="60" width="160" height="120" fill="#d7e6cf" rx="3"></rect>
+                  <rect x="680" y="40" width="160" height="150" fill="#dde3da" rx="3"></rect>
+                  <rect x="60" y="210" width="170" height="150" fill="#dde3da" rx="3"></rect>
+                  <rect x="270" y="220" width="150" height="120" fill="#d7e6cf" rx="3"></rect>
+                  <rect x="640" y="240" width="190" height="120" fill="#dde3da" rx="3"></rect>
+                  <rect x="120" y="410" width="180" height="110" fill="#dde3da" rx="3"></rect>
+                  <rect x="560" y="420" width="200" height="100" fill="#dde3da" rx="3"></rect>
+                </g>
+                <!-- streets -->
+                <g stroke="#fbfcfb" stroke-width="9" stroke-linecap="round">
+                  <line x1="0" y1="185" x2="880" y2="195"></line>
+                  <line x1="0" y1="385" x2="880" y2="392"></line>
+                  <line x1="210" y1="0" x2="220" y2="560"></line>
+                  <line x1="450" y1="0" x2="455" y2="560"></line>
+                  <line x1="655" y1="0" x2="650" y2="560"></line>
+                </g>
+                <!-- river near outfall -->
+                <path d="M-20 470 Q 250 500 460 478 T 900 486 L 900 560 L -20 560 Z" fill="#bcd6e8" opacity=".8"></path>
+                <path d="M-20 470 Q 250 500 460 478 T 900 486" fill="none" stroke="#9cc2db" stroke-width="2"></path>
+
+                <!-- flood raster overlay -->
+                <sc-if value="{{ showFlood }}" hint-placeholder-val="{{ false }}">
+                  <g style="{{ floodGroupStyle }}">
+                    <sc-for list="{{ rasterView }}" as="rv" hint-placeholder-count="0">
+                      <ellipse cx="{{ rv.cx }}" cy="{{ rv.cy }}" rx="{{ rv.rx }}" ry="{{ rv.ry }}" fill="{{ rv.fill }}"></ellipse>
+                    </sc-for>
+                  </g>
+                </sc-if>
+
+                <!-- links -->
+                <sc-if value="{{ showLinks }}" hint-placeholder-val="{{ false }}">
+                  <g>
+                    <sc-for list="{{ linksView }}" as="lk" hint-placeholder-count="0">
+                      <line x1="{{ lk.x1 }}" y1="{{ lk.y1 }}" x2="{{ lk.x2 }}" y2="{{ lk.y2 }}" stroke="{{ lk.color }}" stroke-width="{{ lk.w }}" stroke-linecap="round"></line>
+                    </sc-for>
+                  </g>
+                </sc-if>
+
+                <!-- context nodes -->
+                <sc-if value="{{ showNodes }}" hint-placeholder-val="{{ false }}">
+                  <g>
+                    <sc-for list="{{ ctxView }}" as="cv" hint-placeholder-count="0"><circle cx="{{ cv.cx }}" cy="{{ cv.cy }}" r="4" fill="#aeb8a8" stroke="#fff" stroke-width="1.5"></circle></sc-for>
+                  </g>
+                  <!-- data nodes -->
+                  <g>
+                    <sc-for list="{{ nodesView }}" as="nd" hint-placeholder-count="0">
+                      <g onClick="{{ nd.click }}" style="cursor:pointer">
+                        <circle cx="{{ nd.cx }}" cy="{{ nd.cy }}" r="{{ nd.ring }}" fill="none" stroke="{{ nd.ringColor }}" stroke-width="2.5"></circle>
+                        <circle cx="{{ nd.cx }}" cy="{{ nd.cy }}" r="{{ nd.r }}" fill="{{ nd.color }}" stroke="#fff" stroke-width="2"></circle>
+                        <text x="{{ nd.cx }}" y="{{ nd.ty }}" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#2b333c">{{ nd.id }}</text>
+                      </g>
+                    </sc-for>
+                  </g>
+                </sc-if>
+              </svg>
+              <!-- map chrome overlays -->
+              <div style="position:absolute;top:12px;left:12px;background:rgba(255,255,255,.92);border:1px solid #d4d9e0;border-radius:7px;padding:7px 11px;font-size:11.5px;color:#39424d;backdrop-filter:blur(3px)"><span style="font-weight:700;color:var(--accent)">{{ floodCount }}</span> nodes flooded · peak depth <span style="font-weight:700">{{ peakDepthLabel }}</span></div>
+              <div style="position:absolute;bottom:10px;right:12px;display:flex;flex-direction:column;gap:5px">
+                <div style="width:30px;height:30px;background:#fff;border:1px solid #d4d9e0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#5b6772;cursor:pointer" style-hover="background:#f3f6f9">+</div>
+                <div style="width:30px;height:30px;background:#fff;border:1px solid #d4d9e0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#5b6772;cursor:pointer" style-hover="background:#f3f6f9">−</div>
+              </div>
+              <div style="position:absolute;bottom:10px;left:12px;background:rgba(255,255,255,.85);border-radius:5px;padding:2px 7px;font-size:10px;color:#8893a0">OSM offline tiles · VN-2000 / TM-3</div>
+            </div>
+          </div>
+
+          <!-- RIGHT: node properties -->
+          <div style="width:236px;flex:none;background:#fff;border-left:1px solid #dfe3e9;padding:15px 16px;overflow:auto" class="ewm-scroll">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;margin-bottom:12px">Node Properties</div>
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px">
+              <span style="width:13px;height:13px;border-radius:50%;background:{{ sp.color }}"></span>
+              <span style="font-size:18px;font-weight:700;color:#1f2933">Node {{ sp.id }}</span>
+            </div>
+            <span style="display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.5px;padding:2px 9px;border-radius:20px;background:{{ sp.badgeBg }};color:{{ sp.badgeColor }};margin-bottom:14px">{{ sp.status }}</span>
+            <sc-for list="{{ sp.rows }}" as="r" hint-placeholder-count="6">
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f3f6">
+                <span style="font-size:12px;color:#7a828c">{{ r.k }}</span>
+                <span style="font-size:12.5px;font-weight:600;color:#2b333c;font-family:'Ubuntu Mono',monospace">{{ r.v }}</span>
+              </div>
+            </sc-for>
+            <div style="margin-top:14px;font-size:11px;color:#aab4c0">Click any node on the map to inspect its hydrograph.</div>
+          </div>
+        </div>
+
+        <!-- BOTTOM: table + chart -->
+        <div style="height:266px;flex:none;border-top:1px solid #dfe3e9;display:flex;background:#fff">
+          <div style="width:46%;border-right:1px solid #dfe3e9;display:flex;flex-direction:column">
+            <div style="padding:9px 14px;font-size:10.5px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;border-bottom:1px solid #eef1f5;display:flex;align-items:center">Time Series — Node {{ sp.id }}<span style="margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0;color:#aab4c0;font-size:11px">{{ unitNote }}</span></div>
+            <div class="ewm-scroll" style="flex:1;overflow:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+                <thead><tr style="position:sticky;top:0;background:#f7f8fa;box-shadow:inset 0 -1px 0 #e3e8ee">
+                  <th style="{{ th }}">Time</th><th style="{{ th }};text-align:right">Depth ({{ du }})</th><th style="{{ th }};text-align:right">Flow ({{ qu }})</th><th style="{{ th }};text-align:right">Flooding</th><th style="{{ th }}">Status</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ tableRows }}" as="tr" hint-placeholder-count="8">
+                    <tr style="background:{{ tr.bg }}">
+                      <td style="{{ td }};font-family:'Ubuntu Mono',monospace;color:#5b6772">{{ tr.time }}</td>
+                      <td style="{{ td }};text-align:right;font-family:'Ubuntu Mono',monospace;font-weight:600">{{ tr.depth }}</td>
+                      <td style="{{ td }};text-align:right;font-family:'Ubuntu Mono',monospace">{{ tr.flow }}</td>
+                      <td style="{{ td }};text-align:right;font-family:'Ubuntu Mono',monospace;color:{{ tr.floodColor }}">{{ tr.flood }}</td>
+                      <td style="{{ td }}"><span style="font-size:10px;font-weight:700;color:{{ tr.stColor }}">{{ tr.status }}</span></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+            <div style="padding:9px 14px;font-size:10.5px;font-weight:700;letter-spacing:.8px;color:#8893a0;text-transform:uppercase;border-bottom:1px solid #eef1f5">Water Level Hydrograph</div>
+            <div style="flex:1;padding:8px 12px 4px;min-height:0">
+              <svg viewBox="0 0 560 240" preserveAspectRatio="none" style="width:100%;height:100%">
+                <sc-for list="{{ chart.gridY }}" as="g" hint-placeholder-count="5">
+                  <line x1="44" y1="{{ g.y }}" x2="546" y2="{{ g.y }}" stroke="#eef1f5" stroke-width="1"></line>
+                  <text x="39" y="{{ g.ty }}" text-anchor="end" font-family="Ubuntu Mono, monospace" font-size="10" fill="#aab4c0">{{ g.label }}</text>
+                </sc-for>
+                <sc-for list="{{ chart.gridX }}" as="gx" hint-placeholder-count="7">
+                  <text x="{{ gx.x }}" y="234" text-anchor="middle" font-family="Ubuntu Mono, monospace" font-size="10" fill="#aab4c0">{{ gx.label }}</text>
+                </sc-for>
+                <!-- flooding shading -->
+                <sc-for list="{{ chart.floodRects }}" as="fr" hint-placeholder-count="0">
+                  <rect x="{{ fr.x }}" y="14" width="{{ fr.w }}" height="198" fill="#f8d7d7" opacity=".6"></rect>
+                </sc-for>
+                <!-- area + line -->
+                <path d="{{ chart.area }}" style="fill:var(--accent,#1565a7);opacity:.13"></path>
+                <polyline points="{{ chart.points }}" fill="none" style="stroke:var(--accent,#1565a7)" stroke-width="2.4" stroke-linejoin="round"></polyline>
+                <!-- ground/rim line -->
+                <line x1="44" y1="{{ chart.rimY }}" x2="546" y2="{{ chart.rimY }}" stroke="#d64545" stroke-width="1.5" stroke-dasharray="6 4"></line>
+                <text x="546" y="{{ chart.rimTextY }}" text-anchor="end" font-family="Ubuntu, sans-serif" font-size="10" font-weight="700" fill="#d64545">ground level</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1565a7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#1565a7&quot;,&quot;#0e7d8c&quot;,&quot;#2e4a6b&quot;,&quot;#1d7a3e&quot;]},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Comfortable&quot;,&quot;options&quot;:[&quot;Comfortable&quot;,&quot;Compact&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;unitSystem&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Metric&quot;,&quot;options&quot;:[&quot;Metric&quot;,&quot;Imperial&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'login', password: '', pwError: '',
+    tab: 'input', rasterImported: true,
+    sim: { startDate:'2026-06-16', startTime:'15:00:00', endDate:'2026-06-16', endTime:'21:00:00', timestep:'60' },
+    iniEdit: false,
+    prefix: 'flood_run1',
+    runState: 'idle', progress: 0, logLines: [], elapsed: 0, resultsEnabled: false,
+    resultsOpen: false, selectedNode: '805',
+    layers: { nodes:true, links:true, flood:true, base:true }, floodOpacity: 65,
+  };
+
+  TL = ['15:00','15:15','15:30','15:45','16:00','16:15','16:30','16:45','17:00','17:15','17:30','17:45','18:00','18:15','18:30','18:45','19:00','19:15','19:30','19:45','20:00','20:15','20:30','20:45','21:00'];
+  order = ['1','906','805','804','928','812','819','806','821','827','921','808'];
+  links = [['1','906'],['906','805'],['819','804'],['806','819'],['928','805'],['805','812'],['804','812'],['821','928'],['921','812'],['827','812'],['812','808']];
+  ctx = [[14,36],[64,12],[88,30],[12,74],[88,72],[40,80],[62,82],[26,52],[76,40],[48,30],[18,22],[58,72]];
+  D = {
+    '805':{type:'JUNCTION',x:44,y:50,invFt:5.24,rimM:6.6,st:'FLOODING',dep:[0.029,0.079,0.192,0.428,0.862,1.577,2.615,3.933,5.366,6.639,7.45,7.582,6.999,5.859,4.449,3.064,1.913,1.084,0.557,0.259,0.11,0.042,0.015,0.005,0.001],flo:[0.0022,0.0058,0.0143,0.0318,0.0641,0.1172,0.1944,0.2923,0.3988,0.4934,0.5537,0.5635,0.5202,0.4355,0.3306,0.2277,0.1422,0.0806,0.0414,0.0193,0.0082,0.0031,0.0011,0.0003,0.0001],fld:[0,0,0,0,0,0,0,0,0,0.1514,0.3773,0.4141,0.2515,0,0,0,0,0,0,0,0,0,0,0,0]},
+    '804':{type:'JUNCTION',x:58,y:46,invFt:7.48,rimM:6.4,st:'FLOODING',dep:[0.027,0.072,0.177,0.393,0.793,1.451,2.406,3.619,4.937,6.108,6.854,6.975,6.439,5.39,4.093,2.818,1.76,0.997,0.512,0.239,0.101,0.039,0.013,0.004,0.001],flo:[0.002,0.0054,0.0132,0.0293,0.059,0.1078,0.1788,0.269,0.3669,0.4539,0.5094,0.5184,0.4785,0.4006,0.3042,0.2095,0.1308,0.0741,0.0381,0.0177,0.0075,0.0029,0.001,0.0003,0.0001],fld:[0,0,0,0,0,0,0,0,0,0.0033,0.2113,0.2451,0.0955,0,0,0,0,0,0,0,0,0,0,0,0]},
+    '812':{type:'JUNCTION',x:50,y:64,invFt:5.38,rimM:6.0,st:'FLOODING',dep:[0.026,0.069,0.169,0.376,0.759,1.388,2.301,3.462,4.722,5.842,6.556,6.672,6.159,5.156,3.915,2.696,1.684,0.954,0.49,0.228,0.097,0.037,0.013,0.004,0.001],flo:[0.0019,0.0052,0.0126,0.028,0.0564,0.1031,0.171,0.2573,0.351,0.4342,0.4872,0.4959,0.4577,0.3832,0.291,0.2003,0.1251,0.0709,0.0364,0.017,0.0072,0.0027,0.001,0.0003,0.0001],fld:[0,0,0,0,0,0,0,0,0,0,0.1282,0.1606,0.0175,0,0,0,0,0,0,0,0,0,0,0,0]},
+    '928':{type:'JUNCTION',x:34,y:46,invFt:7.58,rimM:6.1,st:'FLOODING',dep:[0.024,0.066,0.162,0.359,0.725,1.325,2.197,3.304,4.507,5.577,6.258,6.369,5.879,4.922,3.737,2.573,1.607,0.91,0.468,0.218,0.092,0.035,0.012,0.004,0.001],flo:[0.0018,0.0049,0.012,0.0267,0.0539,0.0985,0.1633,0.2456,0.335,0.4145,0.4651,0.4733,0.4369,0.3658,0.2777,0.1913,0.1194,0.0677,0.0347,0.0162,0.0069,0.0026,0.0009,0.0003,0.0001],fld:[0,0,0,0,0,0,0,0,0,0,0.0451,0.076,0,0,0,0,0,0,0,0,0,0,0,0,0]},
+    '1':{type:'JUNCTION',x:22,y:14,invFt:3.0,rimM:6.3,st:'HIGH',dep:[0.023,0.063,0.154,0.342,0.69,1.262,2.092,3.147,4.293,5.311,5.96,6.066,5.599,4.687,3.559,2.451,1.531,0.867,0.445,0.208,0.088,0.034,0.012,0.004,0.001],flo:[0.0017,0.0047,0.0114,0.0254,0.0513,0.0938,0.1555,0.2339,0.319,0.3947,0.4429,0.4508,0.4161,0.3484,0.2645,0.1821,0.1138,0.0644,0.0331,0.0154,0.0065,0.0025,0.0008,0.0003,0.0001],fld:new Array(25).fill(0)},
+    '819':{type:'JUNCTION',x:70,y:24,invFt:8.84,rimM:6.0,st:'HIGH',dep:[0.022,0.06,0.146,0.325,0.655,1.198,1.988,2.989,4.078,5.046,5.662,5.762,5.319,4.453,3.381,2.328,1.454,0.824,0.423,0.197,0.083,0.032,0.011,0.003,0.001],flo:[0.0016,0.0044,0.0109,0.0242,0.0487,0.0891,0.1477,0.2222,0.3031,0.375,0.4208,0.4283,0.3953,0.3309,0.2513,0.173,0.1081,0.0612,0.0314,0.0147,0.0062,0.0024,0.0008,0.0003,0.0001],fld:new Array(25).fill(0)},
+    '906':{type:'JUNCTION',x:30,y:30,invFt:12.31,rimM:5.4,st:'HIGH',dep:[0.02,0.053,0.131,0.291,0.586,1.072,1.778,2.675,3.649,4.514,5.066,5.156,4.759,3.984,3.025,2.083,1.301,0.737,0.379,0.176,0.075,0.029,0.01,0.003,0.001],flo:[0.0015,0.004,0.0097,0.0216,0.0436,0.0797,0.1322,0.1988,0.2712,0.3355,0.3765,0.3832,0.3537,0.2961,0.2248,0.1548,0.0967,0.0548,0.0281,0.0131,0.0056,0.0021,0.0007,0.0002,0.0001],fld:new Array(25).fill(0)},
+    '806':{type:'JUNCTION',x:82,y:16,invFt:33.11,rimM:3.0,st:'NORMAL',dep:[0.009,0.025,0.062,0.137,0.276,0.505,0.837,1.259,1.717,2.124,2.384,2.426,2.24,1.875,1.423,0.98,0.612,0.347,0.178,0.083,0.035,0.013,0.005,0.002,0],flo:[0.0007,0.0019,0.0046,0.0102,0.0205,0.0375,0.0622,0.0936,0.1276,0.1579,0.1772,0.1803,0.1664,0.1393,0.1058,0.0729,0.0455,0.0258,0.0133,0.0062,0.0026,0.001,0.0003,0.0001,0],fld:new Array(25).fill(0)},
+    '821':{type:'JUNCTION',x:20,y:58,invFt:30.27,rimM:3.3,st:'NORMAL',dep:[0.01,0.028,0.069,0.154,0.311,0.568,0.942,1.416,1.932,2.39,2.682,2.729,2.519,2.109,1.601,1.103,0.689,0.39,0.201,0.093,0.039,0.015,0.005,0.002,0.001],flo:[0.0008,0.0021,0.0052,0.0114,0.0231,0.0422,0.07,0.1053,0.1436,0.1776,0.1993,0.2029,0.1873,0.1568,0.119,0.0819,0.0512,0.029,0.0149,0.0069,0.0029,0.0011,0.0004,0.0001,0.0001],fld:new Array(25).fill(0)},
+    '827':{type:'JUNCTION',x:80,y:50,invFt:35.31,rimM:2.8,st:'NORMAL',dep:[0.008,0.022,0.054,0.12,0.241,0.442,0.732,1.101,1.502,1.859,2.086,2.123,1.96,1.64,1.246,0.858,0.536,0.304,0.156,0.073,0.031,0.012,0.004,0.001,0],flo:[0.0006,0.0016,0.004,0.0089,0.018,0.0328,0.0544,0.0818,0.1117,0.1382,0.155,0.1578,0.1456,0.1219,0.0926,0.0637,0.0398,0.0226,0.0116,0.0054,0.0023,0.0009,0.0003,0.0001,0],fld:new Array(25).fill(0)},
+    '921':{type:'JUNCTION',x:68,y:60,invFt:22.81,rimM:3.8,st:'NORMAL',dep:[0.013,0.034,0.085,0.188,0.379,0.694,1.151,1.731,2.361,2.921,3.278,3.336,3.079,2.578,1.957,1.348,0.842,0.477,0.245,0.114,0.048,0.019,0.006,0.002,0.001],flo:[0.001,0.0025,0.0063,0.014,0.0282,0.0516,0.0855,0.1286,0.1755,0.2171,0.2436,0.2479,0.2289,0.1916,0.1455,0.1002,0.0626,0.0355,0.0182,0.0085,0.0036,0.0014,0.0005,0.0002,0.0001],fld:new Array(25).fill(0)},
+    '808':{type:'OUTFALL',x:50,y:88,invFt:150.53,rimM:2.5,st:'NORMAL',dep:[0.002,0.006,0.016,0.034,0.069,0.126,0.209,0.315,0.429,0.531,0.596,0.607,0.56,0.469,0.356,0.245,0.153,0.087,0.045,0.021,0.009,0.003,0.001,0,0],flo:[0.0002,0.0005,0.0012,0.0025,0.0051,0.0094,0.0155,0.0234,0.0319,0.0395,0.0443,0.0451,0.0416,0.0348,0.0264,0.0182,0.0114,0.0064,0.0033,0.0015,0.0007,0.0003,0.0001,0,0],fld:new Array(25).fill(0)},
+  };
+  logScript = [
+    {t:'15:34:01',k:'ok',m:'Validating license… valid (365 days remaining)'},
+    {t:'15:34:01',k:'info',m:'Initializing GRASS session: urban_flood_2026/PERMANENT'},
+    {t:'15:34:03',k:'info',m:'Loading SWMM model: hcmc_d3.inp (147 nodes, 189 links)'},
+    {t:'15:34:05',k:'info',m:'Setting GRASS computation region to DEM extent (5 m)'},
+    {t:'15:34:06',k:'info',m:'Importing rainfall raster rain_6h → mapset (r.in.gdal)'},
+    {t:'15:34:07',k:'info',m:'Starting ITZI engine v25.8 …'},
+    {t:'15:34:09',k:'info',m:'Sim time 0:15:00 / 6:00:00   ( 4%)',p:4},
+    {t:'15:34:48',k:'info',m:'Sim time 1:00:00 / 6:00:00   (17%)',p:17},
+    {t:'15:35:30',k:'info',m:'Sim time 2:00:00 / 6:00:00   (33%)',p:33},
+    {t:'15:36:05',k:'warn',m:'⚠ Surcharge detected at node 805 (t=2:15:00)'},
+    {t:'15:36:12',k:'info',m:'Sim time 2:30:00 / 6:00:00   (42%)',p:42},
+    {t:'15:36:40',k:'warn',m:'⚠ Node flooding: 804, 805, 812, 928'},
+    {t:'15:37:01',k:'info',m:'Sim time 3:00:00 / 6:00:00   (50%)',p:50},
+    {t:'15:38:00',k:'info',m:'Sim time 4:00:00 / 6:00:00   (67%)',p:67},
+    {t:'15:39:10',k:'info',m:'Sim time 5:00:00 / 6:00:00   (83%)',p:83},
+    {t:'15:40:05',k:'info',m:'Sim time 6:00:00 / 6:00:00   (100%)',p:100},
+    {t:'15:40:06',k:'info',m:'Writing depth rasters → flood_run1_depth_*.tif'},
+    {t:'15:40:08',k:'info',m:'Parsing node time series (147 nodes × 25 steps)'},
+    {t:'15:40:09',k:'ok',m:'✓ Simulation completed in 00:06:08 — 4 nodes flooded'},
+  ];
+
+  setRoot = (el) => { this.rootEl = el; };
+  setLog = (el) => { this.logEl = el; };
+
+  componentDidMount(){ this.applyTheme(); }
+  componentDidUpdate(){ this.applyTheme(); if(this.logEl) this.logEl.scrollTop = this.logEl.scrollHeight; }
+  componentWillUnmount(){ if(this._t) clearInterval(this._t); if(this._e) clearInterval(this._e); }
+
+  darken(hex){ try{ let h=hex.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16); let r=(n>>16)&255,g=(n>>8)&255,b=n&255; const f=0.72; r=Math.round(r*f);g=Math.round(g*f);b=Math.round(b*f); return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}catch(e){return hex;} }
+  applyTheme(){
+    if(!this.rootEl) return;
+    const a = this.props.accent || '#1565a7';
+    this.rootEl.style.setProperty('--accent', a);
+    this.rootEl.style.setProperty('--accent2', this.darken(a));
+    const compact = (this.props.density||'Comfortable')==='Compact';
+    this.rootEl.style.setProperty('--rh', compact?'27px':'31px');
+    this.rootEl.style.setProperty('--fs', compact?'12px':'13px');
+  }
+
+  // ---- handlers ----
+  onPw = (e)=> this.setState({password:e.target.value, pwError:''});
+  onPwKey = (e)=> { if(e.key==='Enter') this.login(); };
+  login = ()=> { if(!this.state.password.trim()){ this.setState({pwError:'Please enter a password.'}); return; } this.setState({screen:'app'}); };
+  logout = ()=> this.setState({screen:'login', password:'', resultsOpen:false});
+  setTab = (t)=> ()=> this.setState({tab:t});
+  gotoSim = ()=> this.setState({tab:'simulation'});
+  importRaster = ()=> this.setState({rasterImported:true});
+  applyDefaults = ()=> this.setState(s=>({sim:{...s.sim, timestep:'60'}}));
+  toggleIniEdit = ()=> this.setState(s=>({iniEdit:!s.iniEdit}));
+  editField = (k)=> (e)=> this.setState(s=>({sim:{...s.sim,[k]:e.target.value}}));
+  editPrefix = (e)=> this.setState({prefix:e.target.value});
+  editOpacity = (e)=> this.setState({floodOpacity: +e.target.value});
+
+  runSim = ()=> {
+    if(this.state.runState==='running') return;
+    this.setState({runState:'running', progress:0, logLines:[], elapsed:0, resultsEnabled:false});
+    this._i = 0;
+    this._t = setInterval(()=>{
+      const s = this.logScript[this._i];
+      if(!s){ clearInterval(this._t); this._t=null; clearInterval(this._e); this._e=null; this.setState({runState:'done', progress:100, resultsEnabled:true}); return; }
+      this._i++;
+      this.setState(st=>({ logLines:[...st.logLines, {...s, color:this.logColor(s.k)}], progress: (s.p!=null? s.p: st.progress) }));
+    }, 340);
+    this._e = setInterval(()=> this.setState(st=>({elapsed:st.elapsed+1})), 1000);
+  };
+  abort = ()=> {
+    if(this.state.runState!=='running') return;
+    if(this._t) clearInterval(this._t); if(this._e) clearInterval(this._e); this._t=null; this._e=null;
+    this.setState(st=>({ runState:'idle', logLines:[...st.logLines, {t:'--:--:--', k:'err', m:'■ Aborted by user. Cleaning up temp files…', color:'#ff7a7a'}] }));
+  };
+  openResults = ()=> { if(this.state.resultsEnabled || this.state.runState==='done') this.setState({resultsOpen:true}); };
+  closeResults = ()=> this.setState({resultsOpen:false});
+  selectNode = (id)=> ()=> this.setState({selectedNode:id});
+  toggleLayer = (k)=> ()=> this.setState(s=>({layers:{...s.layers,[k]:!s.layers[k]}}));
+
+  logColor(k){ return k==='ok' ? '#6fd18a' : k==='warn' ? '#ffcf66' : k==='err' ? '#ff7a7a' : '#9fb4cc'; }
+  px(x){ return x/100*880; }
+  py(y){ return y/100*560; }
+  maxDep(n){ return Math.max(...n.dep); }
+  peakFlow(n){ return Math.max(...n.flo); }
+  conv(){ const imp=(this.props.unitSystem||'Metric')==='Imperial'; return { imp, df: imp?3.28084:1, qf: imp?35.3147:1, du: imp?'ft':'m', qu: imp?'cfs':'m³/s' }; }
+
+  renderVals(){
+    const s = this.state;
+    const c = this.conv();
+    const sel = this.D[s.selectedNode];
+
+    // --- INI text ---
+    const start = `${s.sim.startDate} ${s.sim.startTime}`;
+    const end = `${s.sim.endDate} ${s.sim.endTime}`;
+    const durH = this.durHours();
+    const iniText =
+`[time]
+start_time = ${start}
+end_time   = ${end}
+record_step = ${s.sim.timestep}
+
+[input]
+dem  = dem_5m@PERMANENT
+friction = n_manning
+rain = rain_6h@PERMANENT
+
+[output]
+prefix = ${s.prefix}
+values = depth, velocity, froude
+
+[statistics]
+stats_file = ${s.prefix}_stats.csv
+
+[options]
+theta = 0.7
+hmin  = 0.005
+swmm_inp = hcmc_d3.inp`;
+
+    // --- tabs ---
+    const tabBase = "display:flex;align-items:center;gap:8px;height:38px;padding:0 18px;font-size:13.5px;font-weight:600;cursor:pointer;border-radius:8px 8px 0 0;border:1px solid transparent;border-bottom:none;position:relative;top:1px;";
+    const tabOn = tabBase+"background:#eceff2;color:var(--accent);border-color:#dfe3e9;";
+    const tabOff = tabBase+"background:transparent;color:#7a828c;";
+    const tabs = [
+      {key:'input', label:'Input', glyph:'⬚', badge:'valid'},
+      {key:'simulation', label:'Simulation', glyph:'◷', badge:''},
+      {key:'output', label:'Output & Run', glyph:'▶', badge:''},
+    ].map(t=>({ label:t.label, glyph:t.glyph, badge:t.badge, go:this.setTab(t.key), style: s.tab===t.key? tabOn: tabOff }));
+
+    // --- validations ---
+    const validations = [
+      {icon:'✓',color:'#3f9d52',title:'SWMM model valid',detail:'147 nodes · 189 links · 52 subcatchments · SWMM 5.2'},
+      {icon:'✓',color:'#3f9d52',title:'Raster imported',detail:'dem_5m.tif · 5 m × 5 m · extent 10.5 × 8.2 km · VN-2000'},
+      {icon:'✓',color:'#3f9d52',title:'Rainfall loaded',detail:'rain_6h.tif · 6-hour design storm · 24 steps'},
+      {icon:'✓',color:'#3f9d52',title:'CRS match OK',detail:'All SWMM nodes fall within the raster extent'},
+    ];
+
+    // --- run button states ---
+    const running = s.runState==='running';
+    const done = s.runState==='done';
+    const runBtnBase = "display:flex;align-items:center;justify-content:center;gap:9px;height:46px;border:none;border-radius:8px;font-size:14px;font-weight:700;font-family:inherit;color:#fff;";
+    const runBtnStyle = running ? runBtnBase+"background:#9aa6b2;cursor:not-allowed" : runBtnBase+"background:linear-gradient(150deg,#2e7d46,#1f6336);cursor:pointer;box-shadow:0 6px 16px rgba(31,99,54,.3)";
+    const abortBtnBase = "display:flex;align-items:center;justify-content:center;gap:8px;height:38px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;";
+    const abortBtnStyle = running ? abortBtnBase+"background:#fff;color:#d64545;border:1.5px solid #e7b3b3;cursor:pointer" : abortBtnBase+"background:#f4f6f8;color:#aab4c0;border:1.5px solid #e3e8ee;cursor:not-allowed";
+    const canResults = done || s.resultsEnabled;
+    const resBtnBase = "display:flex;align-items:center;justify-content:center;gap:8px;height:38px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;";
+    const resultsBtnStyle = canResults ? resBtnBase+"background:var(--accent);color:#fff;border:none;cursor:pointer" : resBtnBase+"background:#f4f6f8;color:#aab4c0;border:1.5px solid #e3e8ee;cursor:not-allowed";
+
+    // --- log ---
+    const logView = s.logLines;
+    const runPill = running? {t:'RUNNING',bg:'#fff7e6',c:'#b9821f',b:'#f0d9a8'} : done? {t:'COMPLETED',bg:'#e7f4ea',c:'#2e7d46',b:'#c4e3cd'} : {t:'IDLE',bg:'#eef1f5',c:'#7a828c',b:'#dfe3e9'};
+
+    // --- status bar ---
+    const statusMap = { running:{t:'Running simulation…',d:'#ffcf66'}, done:{t:'Completed — 4 nodes flooded',d:'#6fd18a'} };
+    const st0 = statusMap[s.runState] || {t:'Ready', d:'#6fd18a'};
+
+    // --- map views ---
+    const nodesView = this.order.map(id=>{
+      const n=this.D[id]; const cx=this.px(n.x), cy=this.py(n.y);
+      const color = n.st==='FLOODING'?'#d64545': n.st==='HIGH'?'#e8a33d': n.type==='OUTFALL'?'#5b6772':'#3f9d52';
+      const r = n.st==='FLOODING'?10: n.st==='HIGH'?9:8;
+      const isSel = id===s.selectedNode;
+      return { id, cx, cy, r, color, click:this.selectNode(id), ring: isSel? r+6:0, ringColor: isSel?'var(--accent)':'transparent', ty: cy - r - 6 };
+    });
+    const linksView = this.links.map(([a,b])=>{
+      const na=this.D[a], nb=this.D[b];
+      const f=(this.peakFlow(na)+this.peakFlow(nb))/2;
+      const color = f>0.4?'#0f4f82': f>0.2?'#4a86c5':'#9bbbd8';
+      const w = f>0.4?5: f>0.2?4:3;
+      return { x1:this.px(na.x), y1:this.py(na.y), x2:this.px(nb.x), y2:this.py(nb.y), color, w };
+    });
+    const ctxView = this.ctx.map(([x,y])=>({cx:this.px(x), cy:this.py(y)}));
+    const rasterView = ['805','804','812','928'].map(id=>{ const n=this.D[id]; const sz=this.maxDep(n); return { cx:this.px(n.x), cy:this.py(n.y), rx:34+sz*7, ry:24+sz*4.5, fill:'#3a78c2' }; });
+    const floodGroupStyle = `opacity:${(s.floodOpacity/100*0.62).toFixed(3)};filter:blur(7px)`;
+
+    // --- selected node properties ---
+    const peakIdx = sel.flo.indexOf(this.peakFlow(sel));
+    const floodSteps = sel.fld.filter(v=>v>0).length;
+    const fmt=(v,d=2)=>v.toFixed(d);
+    const sp = {
+      id: s.selectedNode,
+      color: sel.st==='FLOODING'?'#d64545': sel.st==='HIGH'?'#e8a33d': sel.type==='OUTFALL'?'#5b6772':'#3f9d52',
+      status: sel.st,
+      badgeBg: sel.st==='FLOODING'?'#fdeaea': sel.st==='HIGH'?'#fdf3e3':'#e9f5ec',
+      badgeColor: sel.st==='FLOODING'?'#c0392b': sel.st==='HIGH'?'#b9821f':'#2e7d46',
+      rows: [
+        {k:'Type', v: sel.type},
+        {k:'Ground elev.', v: fmt(sel.invFt*c.df,2)+' '+c.du},
+        {k:'Max depth', v: fmt(this.maxDep(sel)*c.df,2)+' '+c.du},
+        {k:'Surcharge limit', v: fmt(sel.rimM*c.df,2)+' '+c.du},
+        {k:'Peak flow', v: fmt(this.peakFlow(sel)*c.qf,c.imp?2:3)+' '+c.qu},
+        {k:'Peak time', v: this.TL[peakIdx]},
+        {k:'Flood duration', v: floodSteps? (floodSteps*15)+' min':'—'},
+      ],
+    };
+
+    // --- table rows ---
+    const tableRows = this.TL.map((t,i)=>{
+      const st = sel.fld[i]>0?'FLOODING': (sel.dep[i]>sel.rimM*0.86?'HIGH':'NORMAL');
+      return {
+        time: t,
+        depth: fmt(sel.dep[i]*c.df, 2),
+        flow: fmt(sel.flo[i]*c.qf, c.imp?2:3),
+        flood: sel.fld[i]>0? fmt(sel.fld[i]*c.qf,c.imp?2:3):'—',
+        floodColor: sel.fld[i]>0?'#c0392b':'#c0c7d0',
+        status: st,
+        stColor: st==='FLOODING'?'#c0392b': st==='HIGH'?'#b9821f':'#3f9d52',
+        bg: sel.fld[i]>0?'#fdf4f4':'transparent',
+      };
+    });
+
+    // --- chart ---
+    const chart = this.buildChart(sel, c);
+
+    // --- shared style snippets ---
+    const inp = "width:100%;height:var(--rh);margin-top:6px;border:1.5px solid #c3cad3;border-radius:6px;padding:0 11px;font-size:13px;font-family:inherit;outline:none;color:#1f2933;background:#fff";
+    const ro = "height:var(--rh);margin-top:6px;border:1.5px solid #e1e6ec;border-radius:6px;padding:0 11px;font-size:12.5px;display:flex;align-items:center;background:#f6f8fa;color:#39424d";
+    const btnGhost = "height:var(--rh);padding:0 14px;background:#fff;border:1.5px solid #c3cad3;border-radius:6px;font-size:12.5px;font-weight:600;font-family:inherit;color:#39424d;cursor:pointer";
+    const statChip = "background:#f3f6f9;border:1px solid #e3e8ee;border-radius:6px;padding:5px 11px;font-size:13px;font-weight:700;color:#2b333c";
+    const th = "text-align:left;padding:7px 10px;font-size:10.5px;font-weight:700;color:#7a828c;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap";
+    const td = "padding:5px 10px;border-bottom:1px solid #f4f6f8;white-space:nowrap";
+
+    const layerDefs = [{k:'nodes',label:'Nodes'},{k:'links',label:'Links (conduits)'},{k:'flood',label:'Flood raster'},{k:'base',label:'OSM base map'}];
+    const layerList = layerDefs.map(l=>({ label:l.label, toggle:this.toggleLayer(l.k), check: s.layers[l.k]?'✓':'', box: s.layers[l.k]?'var(--accent)':'#c3cad3', fill: s.layers[l.k]?'var(--accent)':'#fff' }));
+
+    return {
+      // screens
+      showLogin: s.screen==='login', showApp: s.screen==='app',
+      password: s.password, pwError: s.pwError,
+      login:this.login, onPw:this.onPw, onPwKey:this.onPwKey, logout:this.logout,
+      setRoot:this.setRoot, setLog:this.setLog,
+      menus:['Project','View','Settings','License','Help'],
+      tabs, tools:['Pan','Zoom +','Zoom −','Fit','Export Map','Export CSV'],
+      isInput: s.tab==='input', isSim: s.tab==='simulation', isOutput: s.tab==='output',
+      // input
+      validations, btnGhost, statChip, importRaster:this.importRaster,
+      importLabel: s.rasterImported?'✓ Imported to GRASS':'Import to GRASS', 
+      importBtnStyle: "height:36px;margin-top:14px;width:100%;border:none;border-radius:7px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;color:#fff;background:"+(s.rasterImported?'#3f9d52':'var(--accent)'),
+      readyBg:'#e9f5ec', readyBorder:'#c4e3cd', readyDot:'#3f9d52', readyGlow:'rgba(63,157,82,.2)', readyText:'#2e7d46', readyTitle:'All inputs valid', readySub:'Ready to configure the simulation.',
+      gotoSim:this.gotoSim,
+      // sim
+      sim:s.sim, ed:{ startDate:this.editField('startDate'), startTime:this.editField('startTime'), endDate:this.editField('endDate'), endTime:this.editField('endTime'), timestep:this.editField('timestep'), prefix:this.editPrefix, opacity:this.editOpacity },
+      durationLabel: durH+' hours', courant:'0.31', iniText, inp, ro,
+      iniEditLabel: s.iniEdit?'● editing — click to lock':'✎ Edit manually', applyDefaults:this.applyDefaults, toggleIniEdit:this.toggleIniEdit,
+      // output
+      prefix:s.prefix, runSim:this.runSim, abort:this.abort, openResults:this.openResults,
+      runLabel: running?'Running…': done?'Run Again':'Run Simulation',
+      runBtnStyle, abortBtnStyle, resultsBtnStyle, resultsHover: canResults?'filter:brightness(1.07)':'',
+      logEmpty: s.logLines.length===0, logView,
+      runPillText:runPill.t, runPillBg:runPill.bg, runPillColor:runPill.c, runPillBorder:runPill.b,
+      progressPct: s.progress+'%', elapsedStr:this.fmtElapsed(s.elapsed),
+      statusText:st0.t, statusDot:st0.d,
+      // results
+      resultsOpen:s.resultsOpen, closeResults:this.closeResults,
+      layerList, floodOpacity:s.floodOpacity,
+      showNodes:s.layers.nodes, showLinks:s.layers.links, showFlood:s.layers.flood,
+      nodesView, linksView, ctxView, rasterView, floodGroupStyle,
+      floodCount:'4', peakDepthLabel: fmt(7.582*c.df,2)+' '+c.du,
+      sp, tableRows, th, td, chart, du:c.du, qu:c.qu, unitNote:(c.imp?'Imperial (ft, cfs)':'Metric (m, m³/s)'),
+    };
+  }
+
+  durHours(){ const a=this.toMin(this.state.sim.startTime), b=this.toMin(this.state.sim.endTime); let d=(b-a)/60; if(d<=0) d+=24; return Math.round(d*10)/10; }
+  toMin(t){ const p=(t||'0:0:0').split(':'); return (+p[0])*60+(+(p[1]||0)); }
+  fmtElapsed(sec){ const m=Math.floor(sec/60), s=sec%60; return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
+
+  buildChart(n, c){
+    const L=44, R=546, T=14, B=212, W=R-L, H=B-T;
+    const df=c.df;
+    const maxV = Math.max(this.maxDep(n), n.rimM)*1.12*df;
+    const xAt=(i)=> L + i/24*W;
+    const yAt=(v)=> T + (1 - v/maxV)*H;
+    const pts = n.dep.map((d,i)=> `${xAt(i).toFixed(1)},${yAt(d*df).toFixed(1)}`);
+    const area = `M ${L},${B} L ${pts.join(' L ')} L ${R},${B} Z`;
+    const gridY = [0,0.25,0.5,0.75,1].map(f=>{ const v=maxV*(1-f); const y=T+f*H; return { y:+y.toFixed(1), ty:+(y+3).toFixed(1), label: v.toFixed(1) }; });
+    const gridX = [0,4,8,12,16,20,24].map(i=>({ x:+xAt(i).toFixed(1), label:this.TL[i].slice(0,5) }));
+    const rimYv = yAt(n.rimM*df);
+    // flood rects (contiguous)
+    const rects=[]; let i=0; const half=W/24/2;
+    while(i<25){ if(n.fld[i]>0){ let j=i; while(j<25 && n.fld[j]>0) j++; const x0=xAt(i)-half, x1=xAt(j-1)+half; rects.push({x:+Math.max(L,x0).toFixed(1), w:+(Math.min(R,x1)-Math.max(L,x0)).toFixed(1)}); i=j; } else i++; }
+    return { points:pts.join(' '), area, gridY, gridX, rimY:+rimYv.toFixed(1), rimTextY:+(rimYv-4).toFixed(1), floodRects:rects };
+  }
+}
+</script>
+</body>
+</html>
