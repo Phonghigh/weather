@@ -2,8 +2,8 @@ from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QPushButton, QStackedWidget, QSizePolicy, QFrame,
 )
-from PySide6.QtCore import Qt, QPoint, QTimer
-from PySide6.QtGui import QFont, QColor
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QFont
 
 from app import theme
 from app.tabs.input_tab import InputTab
@@ -194,41 +194,51 @@ class MainWindow(QMainWindow):
     def _build_tabstrip(self):
         bar = QFrame()
         bar.setFixedHeight(46)
-        bar.setStyleSheet(
-            f'background:white;border-bottom:1px solid {theme.BORDER};'
-        )
+        bar.setStyleSheet(f'background:white;border-bottom:1px solid {theme.BORDER};')
 
         row = QHBoxLayout(bar)
-        row.setContentsMargins(14, 0, 14, 0)
+        row.setContentsMargins(14, 8, 14, 0)
         row.setSpacing(2)
-        row.setAlignment(Qt.AlignBottom)
+        row.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
 
-        self._tab_btns = {}
+        self._tab_btns = {}     # key → QWidget container
+        self._tab_labels = {}   # key → {'glyph': QLabel, 'text': QLabel}
+
         for key, glyph, label, badge in TABS:
-            btn = QPushButton()
+            # QWidget (not QPushButton) so the layout's sizeHint is respected
+            btn = QWidget()
             btn.setCursor(Qt.PointingHandCursor)
-            btn.setProperty('tabKey', key)
-
-            inner = QHBoxLayout()
-            inner.setSpacing(8)
-            glyph_lbl = QLabel(glyph)
-            glyph_lbl.setAlignment(Qt.AlignCenter)
-            glyph_lbl.setFixedSize(18, 18)
-            label_lbl = QLabel(label)
-            inner.addWidget(glyph_lbl)
-            inner.addWidget(label_lbl)
-            if badge:
-                badge_lbl = QLabel(badge)
-                badge_lbl.setStyleSheet(f"""
-                    font-size:10px;background:#e7f4ea;color:#2e7d46;
-                    border:1px solid #c4e3cd;border-radius:10px;padding:0 6px;font-weight:600;
-                """)
-                inner.addWidget(badge_lbl)
-
-            btn.setLayout(inner)
             btn.setFixedHeight(38)
-            btn.clicked.connect(lambda checked=False, k=key: self._switch_tab(k))
+            btn.setAttribute(Qt.WA_StyledBackground, True)
+
+            inner = QHBoxLayout(btn)
+            inner.setContentsMargins(18, 0, 18, 0)
+            inner.setSpacing(8)
+
+            glyph_lbl = QLabel(glyph)
+            glyph_lbl.setFixedSize(18, 18)
+            glyph_lbl.setAlignment(Qt.AlignCenter)
+
+            text_lbl = QLabel(label)
+
+            inner.addWidget(glyph_lbl)
+            inner.addWidget(text_lbl)
+
+            if badge:
+                bdg = QLabel(badge)
+                bdg.setStyleSheet(
+                    'font-size:10px;background:#e7f4ea;color:#2e7d46;'
+                    'border:1px solid #c4e3cd;border-radius:10px;'
+                    'padding:0 6px;font-weight:600;'
+                )
+                inner.addWidget(bdg)
+
+            btn.mousePressEvent = (
+                lambda ev, k=key: self._switch_tab(k) if ev.button() == Qt.LeftButton else None
+            )
+
             self._tab_btns[key] = btn
+            self._tab_labels[key] = {'glyph': glyph_lbl, 'text': text_lbl}
             row.addWidget(btn)
 
         row.addStretch()
@@ -237,35 +247,41 @@ class MainWindow(QMainWindow):
     def _update_tab_styles(self):
         for key, btn in self._tab_btns.items():
             active = key == self._current_tab
+            lbls = self._tab_labels[key]
+
             if active:
                 btn.setStyleSheet(f"""
-                    QPushButton {{
-                        display:flex;align-items:center;gap:8px;
-                        height:38px;padding:0 18px;
-                        font-size:13.5px;font-weight:600;
+                    QWidget {{
                         background:{theme.WIN_BG};
-                        color:{theme.ACCENT};
                         border:1px solid {theme.BORDER};
-                        border-bottom:none;
+                        border-bottom:2px solid {theme.WIN_BG};
                         border-radius:8px 8px 0 0;
-                        position:relative;top:1px;
-                        font-family:{theme.FONT};
                     }}
                 """)
+                lbls['text'].setStyleSheet(
+                    f'font-size:13.5px;font-weight:600;color:{theme.ACCENT};'
+                    f'font-family:Ubuntu,sans-serif;background:transparent;border:none;'
+                )
+                lbls['glyph'].setStyleSheet(
+                    f'color:{theme.ACCENT};background:transparent;border:none;'
+                )
             else:
                 btn.setStyleSheet(f"""
-                    QPushButton {{
-                        height:38px;padding:0 18px;
-                        font-size:13.5px;font-weight:600;
+                    QWidget {{
                         background:transparent;
-                        color:{theme.TEXT_MUTED};
                         border:1px solid transparent;
                         border-bottom:none;
                         border-radius:8px 8px 0 0;
-                        font-family:{theme.FONT};
                     }}
-                    QPushButton:hover {{ color:{theme.TEXT2}; }}
+                    QWidget:hover {{ background:#f5f7fa; }}
                 """)
+                lbls['text'].setStyleSheet(
+                    f'font-size:13.5px;font-weight:600;color:{theme.TEXT_MUTED};'
+                    f'font-family:Ubuntu,sans-serif;background:transparent;border:none;'
+                )
+                lbls['glyph'].setStyleSheet(
+                    f'color:{theme.TEXT_MUTED};background:transparent;border:none;'
+                )
 
     # ── Status bar ────────────────────────────────────────────────────────────
     def _build_statusbar(self):

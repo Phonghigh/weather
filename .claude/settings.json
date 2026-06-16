@@ -7,7 +7,10 @@
       "Bash(QT_QPA_PLATFORM=offscreen .venv/bin/python -c ' *)",
       "Bash(grep -v \"^$\")",
       "Bash(grep -v \"box-shadow\\\\|Unknown property\\\\|parse stylesheet\\\\|^$\")",
-      "Bash(grep -v \"Vulkan\\\\|^$\")"
+      "Bash(grep -v \"Vulkan\\\\|^$\")",
+      "Bash(.venv/bin/python main.py)",
+      "Bash(echo \"Process started \\(PID: $!\\)\")",
+      "Bash(pkill -f \"main.py\")"
     ]
   }
 }
